@@ -3,3 +3,5 @@
 build/
 dist/
 pptholer.egg-info/
+dump.pptx
+res/

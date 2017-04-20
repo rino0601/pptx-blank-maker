@@ -1,4 +1,6 @@
 # coding=utf-8
+import io
+
 import click
 from pptx import Presentation
 
@@ -6,8 +8,8 @@ __author__ = 'rino0601'
 
 
 @click.command()
-@click.argument('source_pptx_file', type=click.File('r'))
-def cli(source_pptx_file):
+@click.argument('source_pptx_file_path', type=click.Path(exists=True))
+def cli(source_pptx_file_path):
     click.echo(u"Welcome, Before we start converting, There is some things you have to know.")
     click.echo(u"   1. This tool does not support videos which you upload tistory directly.\n"
                u"   They seems only play able on tistory blog.\n"
@@ -17,19 +19,23 @@ def cli(source_pptx_file):
                u"   I didn't have enough time for consider that.\n"
                u"   3. If you want bring your picture and attachment from tistory, that blog has to be alive.\n"
                u"   (backup_with_attachment.xml isn't available for now.)\n")
-    click.confirm(u'Do you want to continue?', abort=True)
+    # click.confirm(u'Do you want to continue?', abort=True)
     # with click.progressbar(posts, label=u"Converting posts...") as bar:
-    prs = Presentation(source_pptx_file)
+    file_path = click.format_filename(source_pptx_file_path)
+    with io.open(file_path, 'rb') as source_pptx_file:
+        prs = Presentation(source_pptx_file)
+        with io.open(file_path + '.txt', 'w', encoding='utf8') as notepad:
+            for s_num, slide in enumerate(prs.slides):
+                for shape in slide.shapes:
+                    if not shape.has_text_frame:
+                        continue
+                    for i, paragraph in enumerate(shape.text_frame.paragraphs):
+                        text_row = "".join([run.text for run in paragraph.runs])
+                        print(s_num, i, text_row)
+                        notepad.write(text_row)
+                        notepad.write('\n')
 
-    # text_runs will be populated with a list of strings,
-    # one for each text run in presentation
-    text_runs = []
+                        # for run in paragraph.runs:
+                        #     run.text += "ㅗ"
 
-    for slide in prs.slides:
-        for shape in slide.shapes:
-            if not shape.has_text_frame:
-                continue
-            for paragraph in shape.text_frame.paragraphs:
-                for run in paragraph.runs:
-                    text_runs.append(run.text)
-                    print(run.text)
+    click.echo("DONE")
