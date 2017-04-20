@@ -2,6 +2,6 @@
 .venv/
 build/
 dist/
-pptholer.egg-info/
+*.egg-info/
 dump.pptx
 res/

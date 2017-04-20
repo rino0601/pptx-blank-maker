@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(
-    name='pptholer',
+    name='pptxblank',
     version='0.0.1',
     install_requires=['Click', 'python-pptx'],
-    packages=['pptholer'],
+    packages=['pptxblank'],
     url='',
     license='MIT',
     author='rino0601.dev@gmail.com',
@@ -12,6 +12,6 @@ setup(
     description='',
     entry_points='''
         [console_scripts]
-        pptholer=pptholer.main:cli
+        pptxblank=pptxblank.main:cli
     ''',
 )
