@@ -1,15 +1,13 @@
 # coding=utf-8
 import click
+from pptx import Presentation
 
 __author__ = 'rino0601'
 
 
 @click.command()
-@click.argument('tistory_backup_min', type=click.File('r'))
-def cli(tistory_backup_min):
-    """
-    This command make _post & _drafts directory from your tistory_backup.xml file.
-    """
+@click.argument('source_pptx_file', type=click.File('r'))
+def cli(source_pptx_file):
     click.echo(u"Welcome, Before we start converting, There is some things you have to know.")
     click.echo(u"   1. This tool does not support videos which you upload tistory directly.\n"
                u"   They seems only play able on tistory blog.\n"
@@ -21,3 +19,17 @@ def cli(tistory_backup_min):
                u"   (backup_with_attachment.xml isn't available for now.)\n")
     click.confirm(u'Do you want to continue?', abort=True)
     # with click.progressbar(posts, label=u"Converting posts...") as bar:
+    prs = Presentation(source_pptx_file)
+
+    # text_runs will be populated with a list of strings,
+    # one for each text run in presentation
+    text_runs = []
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if not shape.has_text_frame:
+                continue
+            for paragraph in shape.text_frame.paragraphs:
+                for run in paragraph.runs:
+                    text_runs.append(run.text)
+                    print(run.text)
