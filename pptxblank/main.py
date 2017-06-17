@@ -45,3 +45,6 @@ def cli(source_pptx_file_path):
 
     os.chdir(origin_dir)
     click.echo("DONE")
+
+if __name__ == '__main__':
+    cli()
